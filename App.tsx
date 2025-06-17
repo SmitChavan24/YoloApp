@@ -7,122 +7,142 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  Image,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from './screens/HomeScreen';
 import MainScreen from './screens/MainScreen';
+import LinearGradient from 'react-native-linear-gradient';
+import Offer from './assets/images/Offer.png';
+import Home from './assets/images/Home.png';
+import Flake from './assets/images/flake.png';
+import Vector from './assets/images/Vector.png';
+import { GradientBorderView } from '@good-react-native/gradient-border';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import colors from './utils/globalcolors';
 
 const Tab = createBottomTabNavigator();
 const screenWidth = Dimensions.get('window').width;
 
 function OfferScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Profile!</Text>
-    </View>
-  );
-}
-function CustomTabBar({ state, descriptors, navigation }) {
-  const scrollRef = React.useRef();
-
-  React.useEffect(() => {
-    // Scroll to keep the selected tab in center
-    scrollRef.current?.scrollTo({
-      x: (state.index - 1) * (screenWidth / 3),
-      animated: true,
-    });
-  }, [state.index]);
-
-  return (
-    <View style={styles.tabContainer}>
-      <ScrollView
-        horizontal
-        ref={scrollRef}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.tabScroll}
-      >
-        {state.routes.map((route, index) => {
-          const { options } = descriptors[route.key];
-          const label = options.tabBarLabel ?? options.title ?? route.name;
-
-          const isFocused = state.index === index;
-
-          const onPress = () => {
-            const event = navigation.emit({
-              type: 'tabPress',
-              target: route.key,
-              canPreventDefault: true,
-            });
-
-            if (!isFocused && !event.defaultPrevented) {
-              navigation.navigate(route.name);
-            }
-          };
-
-          return (
-            <TouchableOpacity
-              key={index}
-              onPress={onPress}
-              style={[styles.tabItem, isFocused && styles.tabItemFocused]}
-            >
-              <Text style={{ color: isFocused ? '#fff' : '#aaa' }}>
-                {label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
-    </View>
-  );
-}
-
-function RootTabs() {
-  return (
-    <Tab.Navigator
-      initialRouteName="yolo pay"
-      tabBar={props => <CustomTabBar {...props} />}
-      screenOptions={{
-        animation: 'fade',
-        headerShown: false,
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.primary,
       }}
     >
-      <Tab.Screen name="home" component={HomeScreen} />
-      <Tab.Screen name="yolo pay" component={MainScreen} />
-      <Tab.Screen name="ginie" component={OfferScreen} />
-    </Tab.Navigator>
+      <Text style={{ color: '#FFF' }}>Offers!</Text>
+    </View>
+  );
+}
+function HomeScreen() {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.primary,
+      }}
+    >
+      <Text style={{ color: '#FFF' }}>Profile!</Text>
+    </View>
   );
 }
 
 export default function App() {
   return (
     <NavigationContainer>
-      <RootTabs />
+      <Tab.Navigator
+        initialRouteName="yolo pay"
+        screenOptions={{
+          animation: 'none',
+          tabBarStyle: styles.tabbarstyle,
+          tabBarLabelStyle: { marginTop: 12 },
+          headerShown: false,
+        }}
+      >
+        <Tab.Screen
+          name="home"
+          options={{
+            tabBarLabel: 'home',
+            tabBarActiveTintColor: '#FFFFFF',
+            tabBarIcon: ({ color }) => (
+              <GradientBorderView
+                gradientProps={{
+                  colors: ['#FFFFFF', '#000000'],
+                }}
+                style={{
+                  borderWidth: 1,
+                  borderRadius: 100,
+                }}
+              >
+                <Image source={Home} style={{ margin: 10 }} />
+              </GradientBorderView>
+            ),
+          }}
+          component={HomeScreen}
+        />
+        <Tab.Screen
+          name="yolo pay"
+          options={{
+            tabBarActiveTintColor: '#FFFFFF',
+            tabBarLabel: 'yolo pay',
+            tabBarIcon: ({ color }) => (
+              <GradientBorderView
+                gradientProps={{
+                  colors: ['#FFFFFF', '#000000'],
+                }}
+                style={{
+                  borderWidth: 1,
+                  borderRadius: 100,
+                }}
+              >
+                <Image source={Vector} style={{ margin: 18 }} />
+              </GradientBorderView>
+            ),
+          }}
+          component={MainScreen}
+        />
+        <Tab.Screen
+          name="ginie"
+          options={{
+            tabBarLabel: 'ginie',
+            tabBarActiveTintColor: '#FFFFFF',
+            tabBarIcon: ({ color }) => (
+              <GradientBorderView
+                gradientProps={{
+                  colors: ['#FFFFFF', '#000000'],
+                }}
+                style={{
+                  borderWidth: 1,
+                  borderRadius: 100,
+                }}
+              >
+                <Image source={Offer} style={{ margin: 10 }} />
+              </GradientBorderView>
+            ),
+          }}
+          component={OfferScreen}
+        />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  tabContainer: {
-    backgroundColor: '#000',
-    paddingVertical: 10,
-  },
-  tabScroll: {
-    alignItems: 'center',
-    paddingHorizontal: 10,
-  },
-  tabItem: {
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    marginHorizontal: 5,
-    borderRadius: 20,
-    backgroundColor: '#222',
-  },
-  tabItemFocused: {
-    backgroundColor: '#555',
+  tabbarstyle: {
+    backgroundColor: colors.primary,
+    position: 'absolute',
+    borderTopWidth: 1.5,
+    elevation: 4,
+    shadowColor: '#FFF',
+    borderTopEndRadius: 60,
+    borderTopStartRadius: 60,
+    height: 115,
+    paddingTop: '8%',
+    borderTopColor: '#FFFF',
   },
 });
